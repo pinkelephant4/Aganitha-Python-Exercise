@@ -1,0 +1,23 @@
+[project]
+name = "paper-fetcher"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Ananya Maheshwari",email = "ananyamaheshwari2004@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "biopython (>=1.85,<2.0)"
+]
+
+[tool.poetry]
+packages = [{include = "paper_fetcher", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+get-papers-list = "paper_fetcher.cli:main"
