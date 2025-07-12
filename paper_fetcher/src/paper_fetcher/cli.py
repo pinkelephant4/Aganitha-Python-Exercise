@@ -21,13 +21,22 @@ def main() -> None:
     parser.add_argument(
         "-d", "--debug", action="store_true", help="Enable debug logging"
     )
+    parser.add_argument(
+        "-l", "--limit", type=int, default=1000, help="Maximum number of articles to fetch (default: 1000)"
+    )
 
     args = parser.parse_args()
 
-    if args.debug:
-        print(f"[DEBUG] Searching PubMed for: {args.query}", file=sys.stderr)
+    if args.limit < 1 or args.limit > 9999:
+        print("[ERROR] --limit must be between 1 and 9999", file=sys.stderr)
+        sys.exit(1)
 
-    pmids = search_pubmed(args.query)
+    if args.debug:
+        print(f"[DEBUG] Query: {args.query}", file=sys.stderr)
+        print(f"[DEBUG] Fetching up to {args.limit} articles", file=sys.stderr)
+
+    pmids = search_pubmed(args.query, max_results=args.limit)
+
     # pmids = [
     #     # "40636562","40636355","40636320","40636313","40636157","40636108","40635758","40635452","40635373""40634661","40634456","40634170","40634102","40634064","40633919","40633571","40633204","40633069","40632851","40632736","40632654","40632557","40632549","40632333"
     #          ]
@@ -36,14 +45,7 @@ def main() -> None:
         print(f"[DEBUG] Found {len(pmids)} articles", file=sys.stderr)
 
     articles = fetch_details(pmids)
-    results = []
-
-    # print(articles)
-    
-    for article in articles:
-        record = extract_paper_info(article)
-        if record:
-            results.append(record)
+    results = [extract_paper_info(a) for a in articles if extract_paper_info(a)]
 
     if args.debug:
         print(f"[DEBUG] {len(results)} articles with non-academic authors", file=sys.stderr)

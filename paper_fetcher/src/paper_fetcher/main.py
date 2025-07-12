@@ -3,25 +3,57 @@ from Bio import Entrez
 import csv
 import re
 import sys
+import time
+
 
 Entrez.email = "ananya.219311187@muj.manipal.edu"
+MAX_PUBMED_RESULTS = 9999
 
 
-def search_pubmed(query: str, retmax: int = 100) -> List[str]:
-    handle = Entrez.esearch(db="pubmed", term=query, retmax=retmax)
-    res = Entrez.read(handle)
-    # print(res)
-    return res.get("IdList", [])
+def search_pubmed(query: str, max_results: int = 1000) -> List[str]:
+    pmids = []
+    batch_size = 1000
+    start = 0
+
+    max_results = min(max_results, MAX_PUBMED_RESULTS)
+
+    while start < max_results:
+        with Entrez.esearch(
+            db="pubmed",
+            term=query,
+            retmode="xml",
+            retstart=start,
+            retmax=min(batch_size, max_results - start)
+        ) as handle:
+            results = Entrez.read(handle)
+
+        batch_pmids = results.get("IdList", [])
+        pmids.extend(batch_pmids)
+
+        if not batch_pmids:
+            break
+
+        start += len(batch_pmids)
+        time.sleep(0.34)
+
+    return pmids
 
 
 def fetch_details(pmids: List[str]) -> List[Dict]:
-    if not pmids:
-        return []
-    ids = ",".join(pmids)
-    handle = Entrez.efetch(db="pubmed", id=ids, retmode="xml")
-    res = Entrez.read(handle)
-    # print(res)
-    return res.get("PubmedArticle", [])
+    records = []
+    batch_size = 200
+
+    for i in range(0, len(pmids), batch_size):
+        batch_ids = pmids[i:i + batch_size]
+        ids_str = ",".join(batch_ids)
+
+        with Entrez.efetch(db="pubmed", id=ids_str, retmode="xml") as handle:
+            fetched = Entrez.read(handle)
+
+        records.extend(fetched.get("PubmedArticle", []))
+        time.sleep(0.34)
+
+    return records
 
 
 def extract_paper_info(article: Dict) -> Optional[Dict]:
@@ -51,7 +83,7 @@ def extract_paper_info(article: Dict) -> Optional[Dict]:
         corresponding_email = ""
 
         company_keywords = ["Inc", "Ltd", "LLC", "Corp", "Corporation", "Co.", "Limited"]
-        academic_keywords = ["University", "College", "Hospital", "Academy", "Unive"]
+        academic_keywords = ["University", "College", "Hospital", "Academy", "Unive", "Provincial", "National", "Nacional", "School", "Public"]
 
         for author in authors:
             aff_info = author.get("AffiliationInfo", [])
@@ -74,9 +106,6 @@ def extract_paper_info(article: Dict) -> Optional[Dict]:
                 non_academic_authors.append(full_name)
                 company_name = affiliation
                 company_affiliations.append(company_name)
-                print(aff_info)
-                print(affiliation)
-                print()
 
         if non_academic_authors:
             return {
