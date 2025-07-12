@@ -1,6 +1,6 @@
 [project]
 name = "pubmed-paper-fetcher-ananya"
-version = "0.1.0"
+version = "0.1.1"
 description = "Fetch PubMed papers with industry-affiliated authors"
 authors = [
     {name = "Ananya Maheshwari",email = "ananyamaheshwari2004@gmail.com"}
@@ -8,7 +8,8 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "biopython (>=1.85,<2.0)"
+    "biopython (>=1.85,<2.0)",
+    "tabulate (>=0.9.0,<0.10.0)"
 ]
 
 [tool.poetry]

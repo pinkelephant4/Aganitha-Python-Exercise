@@ -4,6 +4,8 @@ import csv
 import re
 import sys
 import time
+from tabulate import tabulate 
+import textwrap
 
 # Required by NCBI's Entrez API
 Entrez.email = "ananya.219311187@muj.manipal.edu"  
@@ -162,7 +164,7 @@ def extract_paper_info(article: Dict) -> Optional[Dict]:
 
 def write_csv(records: List[Dict], filename: Optional[str] = None) -> None:
     """
-    Writes a list of article records to a CSV file (or stdout if no file is given).
+    Write records to a CSV file or print a pretty table to console if no file is specified.
 
     Args:
         records (List[Dict]): List of extracted article data dictionaries.
@@ -178,15 +180,31 @@ def write_csv(records: List[Dict], filename: Optional[str] = None) -> None:
     ]
 
     try:
-        output_stream = open(filename, "w", newline="", encoding="utf-8") if filename else sys.stdout
-        writer = csv.DictWriter(output_stream, fieldnames=fieldnames)
-        writer.writeheader()
-
-        for record in records:
-            writer.writerow(record)
-
         if filename:
-            output_stream.close()
+        # Write to file
+            with open(filename, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                for record in records:
+                    writer.writerow(record)
+        else:
+            # Pretty print to console
+            def wrap_field(value: str, width: int = 30) -> str:
+                return "\n".join(textwrap.wrap(str(value), width=width))
+
+            wrapped_table = []
+            for record in records:
+                row = [
+                    record.get("PubmedID", ""),
+                    wrap_field(record.get("Title", ""), 40),
+                    record.get("Publication Date", ""),
+                    wrap_field(record.get("Non-academic Authors", ""), 30),
+                    wrap_field(record.get("Company Affiliations", ""), 35),
+                    wrap_field(record.get("Corresponding Email", ""), 35)
+                ]
+                wrapped_table.append(row)
+
+        print(tabulate(wrapped_table, headers=fieldnames, tablefmt="fancy_grid"))
 
     except Exception as e:
         print(f"[ERROR] Failed to write CSV output: {e}", file=sys.stderr)
