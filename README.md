@@ -1,6 +1,17 @@
 # 🧬 PubMed Paper Fetcher
 
+[![TestPyPI](https://img.shields.io/badge/TestPyPI-pubmed--paper--fetcher--ananya-purple)](https://test.pypi.org/project/pubmed-paper-fetcher-ananya)
+
 A Python command-line tool to fetch research papers from **PubMed** based on a user-defined query, filtering for papers that include **non-academic authors affiliated with pharmaceutical or biotech companies**.
+
+
+## 🚀 Features
+
+- Supports full PubMed query syntax
+- Identifies non-academic (industry) authors using heuristics
+- Filters and returns company-affiliated papers
+- Outputs to CSV or nicely formatted console table
+- Supports up to 10,000 articles per query
 
 
 ## 📁 Project Structure
@@ -19,14 +30,32 @@ paper_fetcher/
 ## ⚙️ Installation
 
 
-### ✅ Step 1: Clone the Repository
+### ▶️ From TestPyPI:
 
 ```bash
-git clone https://github.com/yourusername/paper-fetcher.git
+pip install --index-url https://test.pypi.org/simple/ \
+            --extra-index-url https://pypi.org/simple \
+            pubmed-paper-fetcher-ananya
+```     
+
+> 📦 TestPyPI Page: [https://test.pypi.org/project/pubmed-paper-fetcher-ananya](https://test.pypi.org/project/pubmed-paper-fetcher-ananya)
+
+#### 🧪 Example Usage
+
+```bash
+get-papers-list "mRNA vaccine" --limit 50 --debug
+```
+
+### ▶️ From Github Repo (Development)
+
+#### ✅ Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/pinkelephant4/paper-fetcher.git
 cd paper-fetcher
 ```
 
-### ✅ Step 2: Install with [Poetry](https://python-poetry.org/)
+#### ✅ Step 2: Install with [Poetry](https://python-poetry.org/)
 
 If you don't have Poetry installed:
 
@@ -39,7 +68,11 @@ Then run:
 ```bash
 poetry install
 ```
+Run locally with:
 
+```bash
+poetry run get-papers-list "cancer therapy" --limit 100
+```
 
 ## 🚀 Usage
 
