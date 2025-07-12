@@ -1,5 +1,5 @@
 [project]
-name = "paper-fetcher"
+name = "pubmed-paper-fetcher-ananya"
 version = "0.1.0"
 description = "Fetch PubMed papers with industry-affiliated authors"
 authors = [

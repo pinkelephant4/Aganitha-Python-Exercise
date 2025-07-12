@@ -1,4 +1,4 @@
-# 🧬 PubMed Pharma Paper Fetcher
+# 🧬 PubMed Paper Fetcher
 
 A Python command-line tool to fetch research papers from **PubMed** based on a user-defined query, filtering for papers that include **non-academic authors affiliated with pharmaceutical or biotech companies**.
 
