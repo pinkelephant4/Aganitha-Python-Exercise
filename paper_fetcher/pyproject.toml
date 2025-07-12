@@ -1,7 +1,7 @@
 [project]
 name = "paper-fetcher"
 version = "0.1.0"
-description = ""
+description = "Fetch PubMed papers with industry-affiliated authors"
 authors = [
     {name = "Ananya Maheshwari",email = "ananyamaheshwari2004@gmail.com"}
 ]
